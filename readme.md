@@ -1,3 +1,4 @@
+
 # Decentralized Personal Finance
 
 Personal project for portofolio purpose and learning only.
@@ -14,4 +15,11 @@ Personal project for portofolio purpose and learning only.
 **Client:** -
 
 **Server:** Go, MongoDB, gRPC
+
+
+## Roadmap
+
+- Authentication Service
+
+- API Gateway Implementation
 
