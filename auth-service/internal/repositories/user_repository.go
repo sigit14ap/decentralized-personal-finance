@@ -19,7 +19,7 @@ func NewUserRepository(db *mongo.Database) *UserRepository {
 
 	collection := db.Collection("users")
 	indexModel := mongo.IndexModel{
-		Keys:    bson.M{"email": 1},
+		Keys:    bson.M{"username": 1},
 		Options: options.Index().SetUnique(true),
 	}
 	_, err := collection.Indexes().CreateOne(context.Background(), indexModel)

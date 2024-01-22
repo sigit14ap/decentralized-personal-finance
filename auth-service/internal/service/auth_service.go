@@ -56,13 +56,13 @@ func (service *authService) Login(username string, password string) (string, err
 	user, err := service.userRepository.FindUserByUsername(username)
 
 	if err != nil {
-		return "", err
+		return "", errors.New("invalid username or password")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 
 	if err != nil {
-		return "", errors.New("invalid password")
+		return "", errors.New("invalid username or password")
 	}
 
 	token, err := createToken(username)
@@ -80,7 +80,7 @@ func createToken(username string) (string, error) {
 		"exp":      time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	tokenString, err := token.SignedString(os.Getenv("JWT_SECRET"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		return "", err
 	}

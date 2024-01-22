@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v4"
 	"github.com/sigit14ap/personal-finance/auth-service/internal/handler"
 	pb "github.com/sigit14ap/personal-finance/auth-service/internal/proto"
 	"github.com/sigit14ap/personal-finance/auth-service/internal/repositories"
@@ -32,14 +32,6 @@ func main() {
 	dbHost := os.Getenv("DB_HOST")
 	dbName := os.Getenv("DB_NAME")
 
-	//Start Echo server
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(200, "Hello, gRPC and Echo!")
-	})
-
-	e.Logger.Fatal(e.Start(":8080"))
-
 	//Initialize Database connection
 	mongoClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI(dbHost))
 
@@ -60,11 +52,13 @@ func main() {
 
 	// Start gRPC server
 	go func() {
-		listener, err := net.Listen("tcp", ":50051")
+		grpcPort := fmt.Sprintf(":%s", os.Getenv("GRPC_PORT"))
+		listener, err := net.Listen("tcp", grpcPort)
 		if err != nil {
 			log.Fatalf("Failed to listen: %v", err)
 		}
-		log.Println("gRPC server is running on :50051")
+
+		log.Info(fmt.Sprintf("gRPC server is running on %s", grpcPort))
 		if err := grpcServer.Serve(listener); err != nil {
 			log.Fatalf("Failed to serve: %v", err)
 		}
@@ -75,7 +69,7 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	log.Println("Shutting down the server...")
+	log.Info("Shutting down the server...")
 
 	// Stop the gRPC server
 	grpcServer.GracefulStop()
