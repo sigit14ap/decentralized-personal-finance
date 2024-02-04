@@ -6,8 +6,8 @@ import (
 )
 
 type Users interface {
-	CreateUser(user domain.User) error
-	FindUserByUsername(username string) (domain.User, error)
+	CreateUser(user domain.User) (domain.User, error)
+	FindUserByEmail(username string) (domain.User, error)
 }
 
 type Repositories struct {

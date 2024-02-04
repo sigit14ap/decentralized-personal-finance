@@ -3,12 +3,10 @@ package handler
 import (
 	"context"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/sigit14ap/personal-finance/auth-service/internal/domain"
+	"github.com/sigit14ap/personal-finance/auth-service/internal/helpers"
 	pb "github.com/sigit14ap/personal-finance/auth-service/internal/proto"
 	"github.com/sigit14ap/personal-finance/auth-service/internal/service"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type AuthHandler struct {
@@ -22,50 +20,85 @@ func NewAuthHandler(authService service.AuthService) *AuthHandler {
 }
 
 func (handler *AuthHandler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	err := validateAuthRequest(req.Username, req.Password)
-	if err != nil {
-		return nil, errToRPCError(err)
+	var responseError = []*pb.ResponseError{}
+
+	request := domain.User{
+		Email:    req.Email,
+		Password: req.Password,
 	}
 
-	err = handler.authService.Register(req.Username, req.Password)
-	if err != nil {
-		return nil, errToRPCError(err)
+	validate := helpers.ValidateRequest(request)
+	if validate != nil {
+		return &pb.RegisterResponse{
+			Status:  422,
+			Message: "Validation failed",
+			Error:   validate,
+		}, nil
 	}
 
-	return &pb.RegisterResponse{}, nil
+	_, err := handler.authService.Register(req.Email, req.Password)
+	if err != nil {
+		return &pb.RegisterResponse{
+			Status:  400,
+			Message: err.Error(),
+			Error:   responseError,
+		}, nil
+	}
+
+	return &pb.RegisterResponse{
+		Status:  200,
+		Message: "Register success",
+		Error:   responseError,
+	}, nil
 }
 
 func (handler *AuthHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	err := validateAuthRequest(req.Username, req.Password)
-	if err != nil {
-		return nil, errToRPCError(err)
-	}
-
-	token, err := handler.authService.Login(req.Username, req.Password)
-	if err != nil {
-		return nil, errToRPCError(err)
-	}
-
-	return &pb.LoginResponse{Token: token}, nil
-}
-
-func validateAuthRequest(username, password string) error {
-	validate := validator.New()
+	var responseError = []*pb.ResponseError{}
 
 	request := domain.User{
-		Username: username,
-		Password: password,
+		Email:    req.Email,
+		Password: req.Password,
 	}
 
-	err := validate.Struct(request)
+	validate := helpers.ValidateRequest(request)
+	if validate != nil {
+		return &pb.LoginResponse{
+			Status:  422,
+			Message: "Validation failed",
+			Error:   validate,
+		}, nil
+	}
+
+	token, err := handler.authService.Login(req.Email, req.Password)
 	if err != nil {
-		return err
+		return &pb.LoginResponse{
+			Status:  400,
+			Message: err.Error(),
+			Error:   responseError,
+		}, nil
 	}
 
-	return nil
+	return &pb.LoginResponse{
+		Status:  200,
+		Message: "Login success",
+		Data: &pb.DataLoginResponse{
+			AccessToken: token,
+		},
+	}, nil
 }
 
-func errToRPCError(err error) error {
-	st := status.New(codes.Internal, err.Error())
-	return st.Err()
+func (handler *AuthHandler) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
+	_, err := handler.authService.ValidateToken(req.Token)
+
+	if err != nil {
+		return &pb.ValidateResponse{
+			Status:  401,
+			Message: "Unauthorized",
+		}, nil
+	}
+
+	return &pb.ValidateResponse{
+		Status:  200,
+		Message: "Authorized",
+	}, nil
 }

@@ -19,7 +19,7 @@ func NewUserRepository(db *mongo.Database) *UserRepository {
 
 	collection := db.Collection("users")
 	indexModel := mongo.IndexModel{
-		Keys:    bson.M{"username": 1},
+		Keys:    bson.M{"email": 1},
 		Options: options.Index().SetUnique(true),
 	}
 	_, err := collection.Indexes().CreateOne(context.Background(), indexModel)
@@ -32,15 +32,28 @@ func NewUserRepository(db *mongo.Database) *UserRepository {
 	}
 }
 
-func (repo *UserRepository) CreateUser(user domain.User) error {
+func (repo *UserRepository) CreateUser(user domain.User) (domain.User, error) {
 	_, err := repo.db.InsertOne(context.Background(), user)
-	return err
+	return user, err
 }
 
-func (repo *UserRepository) FindUserByUsername(username string) (domain.User, error) {
+func (repo *UserRepository) FindUserByEmail(email string) (domain.User, error) {
 	var user domain.User
 
-	filter := bson.M{"username": username}
+	filter := bson.M{"email": email}
+	err := repo.db.FindOne(context.Background(), filter).Decode(&user)
+
+	if err == mongo.ErrNoDocuments {
+		return domain.User{}, errors.New("user not found")
+	}
+
+	return user, err
+}
+
+func (repo *UserRepository) FindUserById(id string) (domain.User, error) {
+	var user domain.User
+
+	filter := bson.M{"_id": id}
 	err := repo.db.FindOne(context.Background(), filter).Decode(&user)
 
 	if err == mongo.ErrNoDocuments {

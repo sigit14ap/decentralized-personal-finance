@@ -23,3 +23,6 @@ Personal project for portofolio purpose and learning only.
 
 - API Gateway Implementation
 
+## Commands
+- Protobuf
+```protoc --go_out=plugins=grpc:. .\internal\proto\*.proto```
