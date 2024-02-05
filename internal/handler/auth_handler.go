@@ -3,10 +3,10 @@ package handler
 import (
 	"context"
 
-	"github.com/sigit14ap/personal-finance/auth-service/internal/domain"
-	"github.com/sigit14ap/personal-finance/auth-service/internal/helpers"
-	pb "github.com/sigit14ap/personal-finance/auth-service/internal/proto"
-	"github.com/sigit14ap/personal-finance/auth-service/internal/service"
+	"github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service/internal/domain"
+	"github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service/internal/helpers"
+	pb "github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service/internal/proto"
+	"github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service/internal/service"
 )
 
 type AuthHandler struct {

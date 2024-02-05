@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"github.com/sigit14ap/personal-finance/auth-service/internal/domain"
+	"github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service/internal/domain"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

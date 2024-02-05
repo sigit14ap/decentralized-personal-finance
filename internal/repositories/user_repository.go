@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/sigit14ap/personal-finance/auth-service/internal/domain"
+	"github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service/internal/domain"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/sigit14ap/personal-finance/auth-service/internal/domain"
-	"github.com/sigit14ap/personal-finance/auth-service/internal/repositories"
+	"github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service/internal/domain"
+	"github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service/internal/repositories"
 	"golang.org/x/crypto/bcrypt"
 )
 

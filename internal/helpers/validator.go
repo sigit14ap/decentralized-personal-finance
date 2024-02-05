@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator"
-	pb "github.com/sigit14ap/personal-finance/auth-service/internal/proto"
+	pb "github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service/internal/proto"
 )
 
 func ValidateRequest(request interface{}) []*pb.ResponseError {

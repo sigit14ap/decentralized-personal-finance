@@ -1,4 +1,4 @@
-module github.com/sigit14ap/personal-finance/auth-service
+module github.com/sigit14ap/github.com/sigit14ap/decentralized-personal-finance-auth-service
 
 go 1.21.0
 
